@@ -1,14 +1,20 @@
 // import styled from 'styled-components';
-import Circle from './Circle';
-// 애니메이션 주기위해 keyframes
+import React, { useState } from 'react';
+import styled from 'styled-components';
+
+const Container = styled.div`
+    background-color: ${(props) => props.theme.bgColor};
+`;
+const H1 = styled.h1`
+    color: ${(props) => props.theme.textColor};
+`;
 
 function App() {
   return (
-    <div>
-      <Circle borderColor='yellow' bgColor='teal' />
-      <Circle text='여기다' bgColor='tomato' />
-    </div>
-  );
+      <Container>
+        <H1>protec</H1>
+      </Container>
+  )
 }
 
 export default App;
