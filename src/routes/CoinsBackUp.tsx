@@ -1,8 +1,6 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import {useQuery} from 'react-query'
 import { useEffect, useState } from 'react';
-import { fetchCoins } from '../api';
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -53,7 +51,7 @@ const Img = styled.img`
   margin-right: 10px;
 `;
 
-interface ICoin {
+interface CoinInterface {
   id: string,
     name: string,
     symbol: string,
@@ -64,23 +62,28 @@ interface ICoin {
 }
 
 function Coins() {
-  //! React Query는 React 어플에서 서버 state를 fetching, caching, synchronizing, 
-  //! updating할 수 있도록 도와주는 라이브러리
-  //! loading중이면 로딩중인걸 알려주고, 그 데이터를 data에 넣는다.
-  //! allCoins는 고유키 라고 하고, 어플 전체에서 쿼리를 다시 가져오고, 캐싱하고, 공유하는데 사용
-  //! useQuery에서 반환된 쿼리 결과에는 템플릿 및 기타 데이터 사용에 필요한 쿼리에 대한 모든 정보가 포함되어 있음.
-  //* 제일 중요한건 원래 home 화면으로 가도 로딩이 안뜸. 데이터를 캐시에 저장하기 때문
-  const { isLoading, data } = useQuery<ICoin[]>("allCoins", fetchCoins)
+  const [coins, setCoins] = useState<CoinInterface[]>([])
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    (async() => {
+      const response = await fetch('https://api.coinpaprika.com/v1/coins')
+      const json = await response.json()
+      setCoins(json.slice(0, 100))
+      setLoading(false);
+    })();
+  },[])
+  // [] 는 컴포넌트 시작점에서만 실행
+  // console.log(coins)
   return (
     <Container>
       <Header>
         <Title>코인</Title>
       </Header>
-      {isLoading ? <Loader>Loading</Loader> : 
+      {loading ? <Loader>Loading</Loader> : 
         <CoinsList>
           {/* 그냥 a 태그쓰면 새로고침 되어서 Link 사용 */}
           {/* Link 는 나중에 a태그로 바뀜 */}
-          {data?.slice(0, 100).map((coin) => (
+          {coins.map((coin) => (
             <Coin key={coin.id}>
               <Link to={{
                 pathname:`/${coin.id}`,
