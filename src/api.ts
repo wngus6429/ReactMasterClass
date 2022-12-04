@@ -17,3 +17,12 @@ export function fetchCoinTickers(coinId: string) {
     response.json()
   );
 }
+
+export function fetchCoinHistroy(coinId:string){
+  const endDate = Math.floor(Date.now() / 1000)
+  // 일주일전
+  const startDate = endDate - 60 * 60 * 24 * 7 * 2;
+  return fetch(`https://ohlcv-api.nomadcoders.workers.dev?coinId=${coinId}&start=${startDate}&end=${endDate}`).then((response) =>
+    response.json()
+  );
+}
