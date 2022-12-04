@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
 import { Switch, Route, useLocation, useParams } from 'react-router';
 import { Link, useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
+import { fetchCoinInfo, fetchCoinTickers } from '../api';
 import Chart from './Chart';
 import Price from './Price';
 
@@ -142,35 +143,31 @@ interface PriceData {
   };
 }
 
-//* useParams가 coinId를 포함하는 오브젝트를 반환할거라고 알려줌
+//* */ useParams가 coinId를 포함하는 오브젝트를 반환할거라고 알려줌
 //* useParams은 URL 정보를 잡아낼수 있게 해줌
 function Coin() {
   const { coinId } = useParams<RouteParams>();
-  const [loading, setLoading] = useState(true);
   const { state } = useLocation<RouteState>();
-  const [info, setInfo] = useState<InfoData>();
-  const [priceInfo, setPriceInfo] = useState<PriceData>();
+  //! () => 이렇게 하는건 함수자체를 넘기기 때문 알아서 함수() 해준다.
+  const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(
+    ["info", coinId],
+    () => fetchCoinInfo(coinId)
+  );
+  const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(
+    ["tickers", coinId],
+    () => fetchCoinTickers(coinId)
+  );
   //! useRouteMatch는 특정한 URL에 있는지 여부를 알려줌, object
   //! 특정한 위치에 없으면 null이 뜬다.
   const chartMatch = useRouteMatch('/:coinId/chart');
   const priceMatch = useRouteMatch('/:coinId/price');
-  console.log(chartMatch, priceMatch);
-  useEffect(() => {
-    (async () => {
-      // 이게 바로 캡슐화
-      const infoData = await (await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)).json();
-      const priceData = await (await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)).json();
-      setInfo(infoData);
-      setPriceInfo(priceData);
-      setLoading(false);
-    })();
-  }, [coinId]);
-  // coinId가 변하면 다시 실행
+  //! 둘다 true가 떠야함
+  const loading = infoLoading || tickersLoading;
   return (
     <Container>
       <Header>
         {/* state가 있으면 name가져오고 아니면 Loading을 보여라 */}
-        <Title>{state?.name ? state.name : loading ? 'Loading...' : info?.name}</Title>
+        <Title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</Title>
       </Header>
       {loading ? (
         <Loader>Loading...</Loader>
@@ -179,26 +176,26 @@ function Coin() {
           <Overview>
             <OverviewItem>
               <span>Rank:</span>
-              <span>{info?.rank}</span>
+              <span>{infoData?.rank}</span>
             </OverviewItem>
             <OverviewItem>
               <span>Symbol:</span>
-              <span>${info?.symbol}</span>
+              <span>${infoData?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
               <span>Open Source:</span>
-              <span>{info?.open_source ? 'Yes' : 'No'}</span>
+              <span>{infoData?.open_source ? 'Yes' : 'No'}</span>
             </OverviewItem>
           </Overview>
-          <Description>{info?.description}</Description>
+          <Description>{infoData?.description}</Description>
           <Overview>
             <OverviewItem>
               <span>Total Suply:</span>
-              <span>{priceInfo?.total_supply}</span>
+              <span>{tickersData?.total_supply}</span>
             </OverviewItem>
             <OverviewItem>
               <span>Max Supply:</span>
-              <span>{priceInfo?.max_supply}</span>
+              <span>{tickersData?.max_supply}</span>
             </OverviewItem>
           </Overview>
           <Tabs>
