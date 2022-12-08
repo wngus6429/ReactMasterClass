@@ -29,7 +29,7 @@ function Chart({ coinId }: ChartProps) {
           type='line'
           series={[
             {
-              name: 'sales',
+              name: 'Price',
               data: data?.map((price) => price.close) ?? [],
             },
           ]}
@@ -37,7 +37,35 @@ function Chart({ coinId }: ChartProps) {
             theme: {
               mode: 'dark',
             },
-            chart: { height: 500, width: 500 },
+            chart: {
+              height: 500,
+              width: 500,
+              toolbar: {
+                show: false,
+              },
+              background: 'black',
+            },
+            stroke: {
+              curve: 'smooth',
+              width: 2,
+            },
+            xaxis: {
+              axisBorder: { show: false },
+              axisTicks: { show: false },
+              labels: {
+                show: false,
+              },
+              categories: data?.map((price) => new Date(price.time_close * 1000).toUTCString()),
+            },
+            fill: {
+              type: 'gradient',
+              gradient: { gradientToColors: ['gold'], stops: [0, 100] },
+            },
+            tooltip: {
+              y: {
+                formatter: (value) => `$${value.toFixed(2)}`,
+              },
+            },
           }}
         />
       )}
