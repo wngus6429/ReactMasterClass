@@ -1,10 +1,12 @@
 import { useQuery } from 'react-query';
-import { Switch, Route, useLocation, useParams } from 'react-router';
+import { Switch, Route, useLocation, useParams, useHistory } from 'react-router';
 import { Link, useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
 import { fetchCoinInfo, fetchCoinTickers } from '../api';
 import Chart from './Chart';
 import Price from './Price';
+import { Helmet } from 'react-helmet'
+import { useCallback } from 'react';
 
 interface RouteParams {
   coinId: string;
@@ -143,8 +145,9 @@ interface PriceData {
   };
 }
 
-//* */ useParams가 coinId를 포함하는 오브젝트를 반환할거라고 알려줌
+//* useParams가 coinId를 포함하는 오브젝트를 반환할거라고 알려줌
 //* useParams은 URL 정보를 잡아낼수 있게 해줌
+//! useQuery의 3번째 인자 refetchInterval 로 몇초에 한번 데이터 다시 부르기 가능
 function Coin() {
   const { coinId } = useParams<RouteParams>();
   const { state } = useLocation<RouteState>();
@@ -155,7 +158,10 @@ function Coin() {
   );
   const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(
     ["tickers", coinId],
-    () => fetchCoinTickers(coinId)
+    () => fetchCoinTickers(coinId),
+    {
+      refetchInterval:10000
+    }
   );
   //! useRouteMatch는 특정한 URL에 있는지 여부를 알려줌, object
   //! 특정한 위치에 없으면 null이 뜬다.
@@ -163,8 +169,12 @@ function Coin() {
   const priceMatch = useRouteMatch('/:coinId/price');
   //! 둘다 true가 떠야함
   const loading = infoLoading || tickersLoading;
+  let history = useHistory();
   return (
     <Container>
+      <Helmet>
+        <title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</title>
+      </Helmet>
       <Header>
         {/* state가 있으면 name가져오고 아니면 Loading을 보여라 */}
         <Title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</Title>
@@ -174,6 +184,7 @@ function Coin() {
       ) : (
         <>
           <Overview>
+            <button onClick={() => history.push('/')}>Go to Home</button>
             <OverviewItem>
               <span>Rank:</span>
               <span>{infoData?.rank}</span>
@@ -183,8 +194,8 @@ function Coin() {
               <span>${infoData?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
-              <span>Open Source:</span>
-              <span>{infoData?.open_source ? 'Yes' : 'No'}</span>
+              <span>Price:</span>
+              <span>${tickersData?.quotes.USD.price.toFixed(3)}</span>
             </OverviewItem>
           </Overview>
           <Description>{infoData?.description}</Description>

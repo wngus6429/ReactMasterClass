@@ -19,7 +19,9 @@ interface ChartProps {
 }
 function Chart({ coinId }: ChartProps) {
   // const params = useParams();
-  const { isLoading, data } = useQuery<IHistorical[]>(['ohlcv', coinId], () => fetchCoinHistroy(coinId));
+  const { isLoading, data } = useQuery<IHistorical[]>(['ohlcv', coinId], () => fetchCoinHistroy(coinId), {
+    refetchInterval:10000
+  });
   return (
     <div>
       {isLoading ? (
@@ -55,7 +57,9 @@ function Chart({ coinId }: ChartProps) {
               labels: {
                 show: false,
               },
-              categories: data?.map((price) => new Date(price.time_close * 1000).toUTCString()),
+              type:'datetime',
+              // categories: data?.map((price) => new Date(price.time_close * 1000).toUTCString()),
+              categories: data?.map((price) => price.time_close * 1000)
             },
             fill: {
               type: 'gradient',
