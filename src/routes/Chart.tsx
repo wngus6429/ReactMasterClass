@@ -9,67 +9,82 @@ interface IHistorical {
   open: string;
   high: string;
   low: string;
-  close: number;
+  close: string;
   volume: string;
   market_cap: number;
 }
 
 interface ChartProps {
+  chartName: string|undefined;
   coinId: string;
 }
-function Chart({ coinId }: ChartProps) {
+function Chart({ chartName, coinId }: ChartProps) {
   // const params = useParams();
   const { isLoading, data } = useQuery<IHistorical[]>(['ohlcv', coinId], () => fetchCoinHistroy(coinId), {
     refetchInterval:10000
   });
+  const ChartData = data?.map((Data) => ({
+    x: Data.time_open,
+    y: [Data.open, Data.high, Data.low, Data.close]
+  }));
   return (
     <div>
       {isLoading ? (
         'Loading Chart..'
       ) : (
         <ApexChart
-          type='line'
-          series={[
-            {
-              name: 'Price',
-              data: data?.map((price) => price.close) ?? [],
-            },
-          ]}
+          type="candlestick"
+          series={[{ data: ChartData }] as unknown as number[]} 
           options={{
-            theme: {
-              mode: 'dark',
-            },
             chart: {
-              height: 500,
-              width: 500,
-              toolbar: {
-                show: false,
+              height: 350,
+              type: 'candlestick',
+            },
+            title: {
+              text: chartName,
+              align: 'left',
+              style: {
+                fontSize:  '24px',
+                fontWeight:  'bold',
+                fontFamily:  undefined,
+                color:  'Gold'
               },
-              background: 'black',
             },
-            stroke: {
-              curve: 'smooth',
-              width: 2,
-            },
-            xaxis: {
-              axisBorder: { show: false },
-              axisTicks: { show: false },
-              labels: {
-                show: false,
-              },
-              type:'datetime',
-              // categories: data?.map((price) => new Date(price.time_close * 1000).toUTCString()),
-              categories: data?.map((price) => price.time_close * 1000)
-            },
-            fill: {
-              type: 'gradient',
-              gradient: { gradientToColors: ['gold'], stops: [0, 100] },
+            annotations: {
+              xaxis: [
+                {
+                  x: 'Oct 06 14:00',
+                  borderColor: '#00E396',
+                  label: {
+                    borderColor: '#00E396',
+                    style: {
+                      fontSize: '12px',
+                      color: '#fff',
+                      background: '#00E396'
+                    },
+                    orientation: 'horizontal',
+                    offsetY: 7,
+                    text: 'Annotation Test'
+                  }
+                }
+              ]
             },
             tooltip: {
-              y: {
-                formatter: (value) => `$${value.toFixed(2)}`,
-              },
+              enabled: true,
             },
+            xaxis: {
+              labels:{
+                show: false
+              }
+            },
+            yaxis: {
+              labels:{
+                show: false
+              },
+              tooltip: {
+                enabled: true
+              }
+            }
           }}
         />
       )}

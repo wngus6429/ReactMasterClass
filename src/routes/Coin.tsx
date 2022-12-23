@@ -184,7 +184,7 @@ function Coin() {
       ) : (
         <>
           <Overview>
-            <button onClick={() => history.push('/')}>Go to Home</button>
+            <button onClick={() => history.push('/')}>Go Home</button>
             <OverviewItem>
               <span>Rank:</span>
               <span>{infoData?.rank}</span>
@@ -224,7 +224,7 @@ function Coin() {
               <Price />
             </Route>
             <Route path={`/:coinId/chart`}>
-              <Chart coinId={coinId} />
+              <Chart chartName={infoData?.name} coinId={coinId} />
             </Route>
           </Switch>
         </>
