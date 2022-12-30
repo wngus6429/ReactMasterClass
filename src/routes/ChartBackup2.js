@@ -15,17 +15,17 @@ interface IHistorical {
 }
 
 interface ChartProps {
-  chartName: string | undefined;
+  chartName: string|undefined;
   coinId: string;
 }
 function Chart({ chartName, coinId }: ChartProps) {
   // const params = useParams();
   const { isLoading, data } = useQuery<IHistorical[]>(['ohlcv', coinId], () => fetchCoinHistroy(coinId), {
-    refetchInterval: 10000,
+    refetchInterval:10000
   });
   const ChartData = data?.map((Data) => ({
     x: Data.time_open,
-    y: [Data.open, Data.high, Data.low, Data.close],
+    y: [Data.open, Data.high, Data.low, Data.close]
   }));
   return (
     <div>
@@ -33,8 +33,8 @@ function Chart({ chartName, coinId }: ChartProps) {
         'Loading Chart..'
       ) : (
         <ApexChart
-          type='candlestick'
-          series={[{ data: ChartData }] as unknown as number[]}
+          type="candlestick"
+          series={[{ data: ChartData }] as unknown as number[]} 
           options={{
             chart: {
               height: 350,
@@ -44,10 +44,10 @@ function Chart({ chartName, coinId }: ChartProps) {
               text: chartName,
               align: 'left',
               style: {
-                fontSize: '24px',
-                fontWeight: 'bold',
-                fontFamily: undefined,
-                color: 'Gold',
+                fontSize:  '24px',
+                fontWeight:  'bold',
+                fontFamily:  undefined,
+                color:  'Gold'
               },
             },
             annotations: {
@@ -60,31 +60,31 @@ function Chart({ chartName, coinId }: ChartProps) {
                     style: {
                       fontSize: '12px',
                       color: '#fff',
-                      background: '#00E396',
+                      background: '#00E396'
                     },
                     orientation: 'horizontal',
                     offsetY: 7,
-                    text: 'Annotation Test',
-                  },
-                },
-              ],
+                    text: 'Annotation Test'
+                  }
+                }
+              ]
             },
             tooltip: {
               enabled: true,
             },
             xaxis: {
-              labels: {
-                show: false,
-              },
+              labels:{
+                show: false
+              }
             },
             yaxis: {
-              labels: {
-                show: false,
+              labels:{
+                show: false
               },
               tooltip: {
-                enabled: true,
-              },
-            },
+                enabled: true
+              }
+            }
           }}
         />
       )}

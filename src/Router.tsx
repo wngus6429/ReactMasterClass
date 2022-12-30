@@ -1,16 +1,20 @@
-import { BrowserRouter, Switch, Route } from "react-router-dom";
-import Coin from "./routes/Coin";
-import Coins from "./routes/Coins";
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import Coin from './routes/Coin';
+import Coins from './routes/Coins';
 
-function Router() {
+interface IRouterProps {
+  toggleDark: () => void; //void는 아무것도 없다고
+}
+
+function Router({ toggleDark }: IRouterProps) {
   return (
     <BrowserRouter>
       <Switch>
-        <Route path="/:coinId">
+        <Route path='/:coinId'>
           <Coin />
         </Route>
-        <Route path="/">
-          <Coins />
+        <Route path='/'>
+          <Coins toggleDark={toggleDark} />
         </Route>
       </Switch>
     </BrowserRouter>
