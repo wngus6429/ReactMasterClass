@@ -68,8 +68,8 @@ a{
 `;
 
 function App() {
-  // themeProvider 이게 원래 index.tsx에 있었는데.
-  // state를 사용해야 하니 여기로 옮긴거다
+  //* themeProvider 이게 원래 index.tsx에 있었는데.
+  //! state를 사용해야 하니 여기로 옮긴거다
   const [isDark, setIsDark] = useState(false);
   const toggleDark = () => setIsDark((current) => !current);
   return (
@@ -77,7 +77,7 @@ function App() {
       <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
         <button onClick={toggleDark}>Toggle Mode</button>
         <GlobalStyle />
-        <Router toggleDark={toggleDark} />
+        <Router isDark={isDark} toggleDark={toggleDark} />
         <ReactQueryDevtools initialIsOpen={true} />
       </ThemeProvider>
     </>

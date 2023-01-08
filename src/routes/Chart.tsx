@@ -17,72 +17,69 @@ interface IHistorical {
 interface ChartProps {
   chartName: string | undefined;
   coinId: string;
+  isDark: boolean;
 }
-function Chart({ chartName, coinId }: ChartProps) {
+function Chart({ chartName, coinId, isDark }: ChartProps) {
   // const params = useParams();
   const { isLoading, data } = useQuery<IHistorical[]>(['ohlcv', coinId], () => fetchCoinHistroy(coinId), {
     refetchInterval: 10000,
   });
-  const ChartData = data?.map((Data) => ({
-    x: Data.time_open,
-    y: [Data.open, Data.high, Data.low, Data.close],
-  }));
   return (
     <div>
       {isLoading ? (
         'Loading Chart..'
       ) : (
         <ApexChart
-          type='candlestick'
-          series={[{ data: ChartData }] as unknown as number[]}
+          type='line'
+          series={[
+            {
+              name: 'Price',
+              data: data?.map((price) => Number(price.close)) as number[],
+            },
+          ]}
           options={{
+            theme: {
+              mode: isDark ? 'dark' : 'light',
+            },
             chart: {
-              height: 350,
-              type: 'candlestick',
+              height: 500,
+              width: 500,
+              toolbar: {
+                show: false,
+              },
+              background: 'black',
             },
             title: {
               text: chartName,
               align: 'left',
               style: {
-                fontSize: '24px',
-                fontWeight: 'bold',
-                fontFamily: undefined,
-                color: 'Gold',
+                fontSize:  '24px',
+                fontWeight:  'bold',
+                fontFamily:  undefined,
+                color:  'Gold'
               },
             },
-            annotations: {
-              xaxis: [
-                {
-                  x: 'Oct 06 14:00',
-                  borderColor: '#00E396',
-                  label: {
-                    borderColor: '#00E396',
-                    style: {
-                      fontSize: '12px',
-                      color: '#fff',
-                      background: '#00E396',
-                    },
-                    orientation: 'horizontal',
-                    offsetY: 7,
-                    text: 'Annotation Test',
-                  },
-                },
-              ],
-            },
-            tooltip: {
-              enabled: true,
+            stroke: {
+              curve: 'smooth',
+              width: 2,
             },
             xaxis: {
+              axisBorder: { show: false },
+              axisTicks: { show: false },
               labels: {
                 show: false,
               },
+              type:'datetime',
+              // categories: data?.map((price) => new Date(price.time_close * 1000).toUTCString()),
+              categories: data?.map((price) => price.time_close * 1000)
             },
-            yaxis: {
-              labels: {
-                show: false,
-              },
-              tooltip: {
-                enabled: true,
+            fill: {
+              type: 'gradient',
+              gradient: { gradientToColors: ['gold'], stops: [0, 100] },
+            },
+            tooltip: {
+              y: {
+                formatter: (value) => `$${value.toFixed(2)}`,
               },
             },
           }}

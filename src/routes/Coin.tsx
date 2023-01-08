@@ -145,10 +145,14 @@ interface PriceData {
   };
 }
 
+interface ICoinProps{
+  isDark: boolean;
+}
+
 //* useParams가 coinId를 포함하는 오브젝트를 반환할거라고 알려줌
 //* useParams은 URL 정보를 잡아낼수 있게 해줌
 //! useQuery의 3번째 인자 refetchInterval 로 몇초에 한번 데이터 다시 부르기 가능
-function Coin() {
+function Coin({isDark}: ICoinProps) {
   const { coinId } = useParams<RouteParams>();
   const { state } = useLocation<RouteState>();
   //! () => 이렇게 하는건 함수자체를 넘기기 때문 알아서 함수() 해준다.
@@ -224,7 +228,7 @@ function Coin() {
               <Price />
             </Route>
             <Route path={`/:coinId/chart`}>
-              <Chart chartName={infoData?.name} coinId={coinId} />
+              <Chart isDark={isDark} chartName={infoData?.name} coinId={coinId} />
             </Route>
           </Switch>
         </>
