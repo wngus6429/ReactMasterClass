@@ -3,6 +3,8 @@ import Router from './Router';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { lightTheme, darkTheme } from './theme';
 import { useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { isDarkAtom } from './atoms';
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
@@ -70,14 +72,16 @@ a{
 function App() {
   //* themeProvider 이게 원래 index.tsx에 있었는데.
   //! state를 사용해야 하니 여기로 옮긴거다
-  const [isDark, setIsDark] = useState(false);
-  const toggleDark = () => setIsDark((current) => !current);
+  // const [isDark, setIsDark] = useState(false);
+  // const toggleDark = () => setIsDark((current) => !current);
+  const isDark = useRecoilValue(isDarkAtom);
   return (
     <>
       <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
-        <button onClick={toggleDark}>Toggle Mode</button>
+        {/* <button onClick={toggleDark}>Toggle Mode</button> */}
         <GlobalStyle />
-        <Router isDark={isDark} toggleDark={toggleDark} />
+        <Router />
+        {/* <Router isDark={isDark} toggleDark={toggleDark} /> */}
         <ReactQueryDevtools initialIsOpen={true} />
       </ThemeProvider>
     </>

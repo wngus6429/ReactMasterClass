@@ -65,10 +65,10 @@ interface ICoin {
 }
 
 interface ICoinsProps {
-  toggleDark: () => void; //void는 아무것도 없다고
+  // toggleDark: () => void; //void는 아무것도 없다고
 }
-
-function Coins({ toggleDark }: ICoinsProps) {
+//function Coins({ toggleDark }: ICoinsProps) {
+function Coins({}: ICoinsProps) {
   //! React Query는 React 어플에서 서버 state를 fetching, caching, synchronizing,
   //! updating할 수 있도록 도와주는 라이브러리
   //! loading중이면 로딩중인걸 알려주고, 그 데이터를 data에 넣는다.
@@ -83,7 +83,7 @@ function Coins({ toggleDark }: ICoinsProps) {
       </Helmet>
       <Header>
         <Title>코인</Title>
-        <button onClick={toggleDark}>Toggle Dark Mode</button>
+        {/* <button onClick={toggleDark}>Toggle Dark Mode</button> */}
       </Header>
       {isLoading ? (
         <Loader>Loading</Loader>

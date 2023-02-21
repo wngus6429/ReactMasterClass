@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { fetchCoinInfo, fetchCoinTickers } from '../api';
 import Chart from './Chart';
 import Price from './Price';
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet';
 import { useCallback } from 'react';
 
 interface RouteParams {
@@ -145,28 +145,22 @@ interface PriceData {
   };
 }
 
-interface ICoinProps{
-  isDark: boolean;
+interface ICoinProps {
+  // isDark: boolean;
 }
 
 //* useParams가 coinId를 포함하는 오브젝트를 반환할거라고 알려줌
 //* useParams은 URL 정보를 잡아낼수 있게 해줌
 //! useQuery의 3번째 인자 refetchInterval 로 몇초에 한번 데이터 다시 부르기 가능
-function Coin({isDark}: ICoinProps) {
+//function Coin({isDark}: ICoinProps) {
+function Coin({}: ICoinProps) {
   const { coinId } = useParams<RouteParams>();
   const { state } = useLocation<RouteState>();
   //! () => 이렇게 하는건 함수자체를 넘기기 때문 알아서 함수() 해준다.
-  const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(
-    ["info", coinId],
-    () => fetchCoinInfo(coinId)
-  );
-  const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(
-    ["tickers", coinId],
-    () => fetchCoinTickers(coinId),
-    {
-      refetchInterval:10000
-    }
-  );
+  const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(['info', coinId], () => fetchCoinInfo(coinId));
+  const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(['tickers', coinId], () => fetchCoinTickers(coinId), {
+    refetchInterval: 10000,
+  });
   //! useRouteMatch는 특정한 URL에 있는지 여부를 알려줌, object
   //! 특정한 위치에 없으면 null이 뜬다.
   const chartMatch = useRouteMatch('/:coinId/chart');
@@ -177,11 +171,11 @@ function Coin({isDark}: ICoinProps) {
   return (
     <Container>
       <Helmet>
-        <title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</title>
+        <title>{state?.name ? state.name : loading ? 'Loading...' : infoData?.name}</title>
       </Helmet>
       <Header>
         {/* state가 있으면 name가져오고 아니면 Loading을 보여라 */}
-        <Title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</Title>
+        <Title>{state?.name ? state.name : loading ? 'Loading...' : infoData?.name}</Title>
       </Header>
       {loading ? (
         <Loader>Loading...</Loader>
@@ -228,7 +222,8 @@ function Coin({isDark}: ICoinProps) {
               <Price />
             </Route>
             <Route path={`/:coinId/chart`}>
-              <Chart isDark={isDark} chartName={infoData?.name} coinId={coinId} />
+              {/* <Chart isDark={isDark} chartName={infoData?.name} coinId={coinId} /> */}
+              <Chart chartName={infoData?.name} coinId={coinId} />
             </Route>
           </Switch>
         </>

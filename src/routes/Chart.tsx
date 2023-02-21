@@ -2,6 +2,8 @@ import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { fetchCoinHistroy } from '../api';
 import ApexChart from 'react-apexcharts';
+import { useRecoilValue } from 'recoil';
+import { isDarkAtom } from '../atoms';
 
 interface IHistorical {
   time_open: number;
@@ -17,13 +19,15 @@ interface IHistorical {
 interface ChartProps {
   chartName: string | undefined;
   coinId: string;
-  isDark: boolean;
+  // isDark: boolean;
 }
-function Chart({ chartName, coinId, isDark }: ChartProps) {
+// function Chart({ chartName, coinId, isDark }: ChartProps) {
+function Chart({ chartName, coinId }: ChartProps) {
   // const params = useParams();
   const { isLoading, data } = useQuery<IHistorical[]>(['ohlcv', coinId], () => fetchCoinHistroy(coinId), {
     refetchInterval: 10000,
   });
+  const isDark = useRecoilValue(isDarkAtom);
   return (
     <div>
       {isLoading ? (
@@ -53,10 +57,10 @@ function Chart({ chartName, coinId, isDark }: ChartProps) {
               text: chartName,
               align: 'left',
               style: {
-                fontSize:  '24px',
-                fontWeight:  'bold',
-                fontFamily:  undefined,
-                color:  'Gold'
+                fontSize: '24px',
+                fontWeight: 'bold',
+                fontFamily: undefined,
+                color: 'Gold',
               },
             },
             stroke: {
@@ -69,9 +73,9 @@ function Chart({ chartName, coinId, isDark }: ChartProps) {
               labels: {
                 show: false,
               },
-              type:'datetime',
+              type: 'datetime',
               // categories: data?.map((price) => new Date(price.time_close * 1000).toUTCString()),
-              categories: data?.map((price) => price.time_close * 1000)
+              categories: data?.map((price) => price.time_close * 1000),
             },
             fill: {
               type: 'gradient',
