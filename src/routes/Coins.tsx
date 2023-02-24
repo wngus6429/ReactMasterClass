@@ -4,6 +4,8 @@ import { useQuery } from 'react-query';
 import { useEffect, useState } from 'react';
 import { fetchCoins } from '../api';
 import { Helmet } from 'react-helmet';
+import { useSetRecoilState } from 'recoil';
+import { isDarkAtom } from '../atoms';
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -69,6 +71,8 @@ interface ICoinsProps {
 }
 //function Coins({ toggleDark }: ICoinsProps) {
 function Coins({}: ICoinsProps) {
+  const setDarkAtom = useSetRecoilState(isDarkAtom);
+  const toggleDarkAtom = () => setDarkAtom((prev) => !prev);
   //! React Query는 React 어플에서 서버 state를 fetching, caching, synchronizing,
   //! updating할 수 있도록 도와주는 라이브러리
   //! loading중이면 로딩중인걸 알려주고, 그 데이터를 data에 넣는다.
@@ -84,6 +88,7 @@ function Coins({}: ICoinsProps) {
       <Header>
         <Title>코인</Title>
         {/* <button onClick={toggleDark}>Toggle Dark Mode</button> */}
+        <button onClick={toggleDarkAtom}>Toggle mode</button>
       </Header>
       {isLoading ? (
         <Loader>Loading</Loader>
